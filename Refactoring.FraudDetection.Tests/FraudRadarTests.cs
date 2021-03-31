@@ -60,7 +60,8 @@ namespace Refactoring.FraudDetection.Tests
 
         private static List<FraudRadar.FraudResult> ExecuteTest(string filePath)
         {
-            IFraudRadar fraudRadar = new FraudRadar();
+            IHelper helper = new Helper();
+            IFraudRadar fraudRadar = new FraudRadar(helper);
 
             //instead of passing the filePath, we will read it outside of the check method and pass it the set of lines extracted from the 
             //file in the filepath

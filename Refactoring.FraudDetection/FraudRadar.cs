@@ -9,8 +9,18 @@ namespace Refactoring.FraudDetection
     using System.IO;
     using System.Linq;
 
+   
+
     public class FraudRadar : IFraudRadar
     {
+        private readonly IHelper helper;
+                
+        public FraudRadar(IHelper helper)
+        {
+            this.helper = helper;
+        }
+
+
         public IEnumerable<Order> GetOrders(string filePath)
         {
             var orders = new List<Order>();
@@ -42,55 +52,20 @@ namespace Refactoring.FraudDetection
             }
             return orders;
         }
-
-        public string NormalizeEmail(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return null;
-            }
-            if (!email.Contains("@"))
-            {
-                throw new ArgumentException($"The email {email} is not valid");
-            }
-            string normalizedEmail = string.Empty;
-            var aux = email.Split(new char[] { '@' }, StringSplitOptions.RemoveEmptyEntries);
-
-            var atIndex = aux[0].IndexOf("+", StringComparison.Ordinal);
-
-            aux[0] = atIndex < 0 ? aux[0].Replace(".", "") : aux[0].Replace(".", "").Remove(atIndex);
-
-            normalizedEmail = string.Join("@", new string[] { aux[0], aux[1] });
-            return normalizedEmail;
-        }
-
-        public string NormalizeStreet(string street)
-        {
-            var normalizedStreet = string.Empty;
-            normalizedStreet = street.Replace("st.", "street").Replace("rd.", "road");
-            return normalizedStreet;
-        }
-
-        public string NormalizeState(string state)
-        {
-            var normalizedState = string.Empty;
-            normalizedState = state.Replace("il", "illinois").Replace("ca", "california").Replace("ny", "new york");
-            return normalizedState;
-        }
-
+                
         public IEnumerable<Order> NormalizeOrders(IEnumerable<Order> orders)
         {
             List<Order> normalizedOrders = new List<Order>();
             foreach (var order in orders)
             {
                 //Normalize email                
-                order.Email = NormalizeEmail(order.Email);
+                order.Email = this.helper.NormalizeEmail(order.Email);
 
                 //Normalize street
-                order.Street = NormalizeStreet(order.Street);
+                order.Street = this.helper.NormalizeStreet(order.Street);
 
                 //Normalize state
-                order.State = NormalizeState(order.State);
+                order.State = this.helper.NormalizeState(order.State);
             }
             normalizedOrders.AddRange(orders);
             return normalizedOrders;
@@ -134,15 +109,10 @@ namespace Refactoring.FraudDetection
             }
             return fraudResults;
         }
-
-        public bool CheckFileExists(string filePath)
-        {
-            return File.Exists(filePath);
-        }
-
+        
         public IEnumerable<FraudResult> Check(string filePath)
         {
-            if (!CheckFileExists(filePath))
+            if (!this.helper.CheckFileExists(filePath))
             {
                 throw new FileNotFoundException("The file does not exist", filePath);
             }

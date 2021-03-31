@@ -14,63 +14,14 @@ namespace Refactoring.FraudDetection
     public class FraudRadar : IFraudRadar
     {
         private readonly IHelper helper;
-                
-        public FraudRadar(IHelper helper)
+        private readonly IOrderService orderService;
+
+        public FraudRadar(IHelper helper, IOrderService orderService)
         {
             this.helper = helper;
+            this.orderService = orderService;
         }
-
-
-        public IEnumerable<Order> GetOrders(string filePath)
-        {
-            var orders = new List<Order>();
-
-
-            var lines = File.ReadAllLines(filePath);
-            if (lines.Any(line=>!line.Contains(",")))
-            {
-                throw new FormatException("File is not format compliant. Not all lines are well formatted");
-            }
-
-            foreach (var line in lines)
-            {
-                var items = line.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-                var order = new Order
-                {
-                    OrderId = int.Parse(items[0]),
-                    DealId = int.Parse(items[1]),
-                    Email = items[2].ToLower(),
-                    Street = items[3].ToLower(),
-                    City = items[4].ToLower(),
-                    State = items[5].ToLower(),
-                    ZipCode = items[6],
-                    CreditCard = items[7]
-                };
-
-                orders.Add(order);
-            }
-            return orders;
-        }
-                
-        public IEnumerable<Order> NormalizeOrders(IEnumerable<Order> orders)
-        {
-            List<Order> normalizedOrders = new List<Order>();
-            foreach (var order in orders)
-            {
-                //Normalize email                
-                order.Email = this.helper.NormalizeEmail(order.Email);
-
-                //Normalize street
-                order.Street = this.helper.NormalizeStreet(order.Street);
-
-                //Normalize state
-                order.State = this.helper.NormalizeState(order.State);
-            }
-            normalizedOrders.AddRange(orders);
-            return normalizedOrders;
-        }
-
+        
         public IEnumerable<FraudResult> CheckOrdersAndGetFrauds(IEnumerable<Order> ordersRaw)
         {
             var orders = ordersRaw.ToList();
@@ -120,12 +71,11 @@ namespace Refactoring.FraudDetection
             List<FraudResult> fraudResults = new List<FraudResult>();
             IEnumerable<Order> orders = Enumerable.Empty<Order>();
             //GET ORDERS // READ FRAUD LINES            
-            orders = GetOrders(filePath);
+            orders = this.orderService.GetOrders(filePath);
             if (orders.Any())
             {
                 // NORMALIZE
-                orders = NormalizeOrders(orders).ToList();
-
+                orders = this.orderService.NormalizeOrders(orders).ToList();
 
                 // CHECK FRAUD
                 fraudResults = CheckOrdersAndGetFrauds(orders).ToList();
@@ -141,7 +91,7 @@ namespace Refactoring.FraudDetection
             if (orders.Any())
             {
                 // NORMALIZE
-                orders = NormalizeOrders(orders).ToList();
+                orders = this.orderService.NormalizeOrders(orders).ToList();
 
 
                 // CHECK FRAUD

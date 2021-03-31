@@ -58,7 +58,7 @@ namespace Refactoring.FraudDetection.Tests
             result.Should().HaveCount(2, "The result should contains the number of lines of the file");
         }
 
-        private static List<FraudRadar.FraudResult> ExecuteTest(string filePath)
+        private static List<FraudResult> ExecuteTest(string filePath)
         {
             IHelper helper = new Helper();
             IOrderService orderService = new OrderService(helper);

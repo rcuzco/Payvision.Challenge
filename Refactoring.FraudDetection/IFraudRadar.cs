@@ -10,7 +10,7 @@ namespace Refactoring.FraudDetection
     {
         IEnumerable<FraudResult> Check(string filePath);
         IEnumerable<FraudResult> Check(IEnumerable<Order> orders);
-        
+        bool CheckIfOrderIsFraudulent(Order theActualOrder, Order current);
         IEnumerable<FraudResult> CheckOrdersAndGetFrauds(IEnumerable<Order> orders);
         
         

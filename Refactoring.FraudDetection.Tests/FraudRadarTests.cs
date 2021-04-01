@@ -21,7 +21,7 @@ namespace Refactoring.FraudDetection.Tests
             var result = ExecuteTest(Path.Combine(Environment.CurrentDirectory, "Files", "OneLineFile.txt"));
 
             result.Should().NotBeNull("The result should not be null.");
-            result.Should().HaveCount(0, "The result should not contains fraudulent lines");
+            result.Should().HaveCount(0, "The result should not contain fraudulent lines");
         }
 
         [TestMethod]
@@ -64,8 +64,8 @@ namespace Refactoring.FraudDetection.Tests
             IOrderService orderService = new OrderService(helper);
             IFraudRadar fraudRadar = new FraudRadar(helper, orderService);
 
-            //instead of passing the filePath, we will read it outside of the check method and pass it the set of lines extracted from the 
-            //file in the filepath
+            //instead of passing the filePath, we will read it outside of the check method and pass
+            //it the set of extracted lines from the file in the filepath
             var orders = orderService.GetOrders(filePath);
             return fraudRadar.Check(orders).ToList();
         }

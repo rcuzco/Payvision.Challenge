@@ -1,30 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using static Refactoring.FraudDetection.FraudRadar;
+
 
 namespace Refactoring.FraudDetection
 {
     public class OrderService : IOrderService
     {
-        private readonly IHelper helper;
+        private readonly IHelper _helper;
 
         public OrderService(IHelper helper)
         {
-            this.helper = helper;
+            _helper = helper;
         }
 
         public IEnumerable<Order> GetOrders(string filePath)
         {
             var orders = new List<Order>();
 
-
-            var lines = File.ReadAllLines(filePath);
+            var lines = _helper.ReadAllOrderLines(filePath);
             if (lines.Any(line => !line.Contains(",")))
             {
-                throw new FormatException("File is not format compliant. Not all lines are well formatted");
+                throw new FormatException(FraudConstants.FileIsNotFormatCompliant);
             }
 
             foreach (var line in lines)
@@ -54,13 +51,13 @@ namespace Refactoring.FraudDetection
             foreach (var order in orders)
             {
                 //Normalize email                
-                order.Email = this.helper.NormalizeEmail(order.Email);
+                order.Email = _helper.NormalizeEmail(order.Email);
 
                 //Normalize street
-                order.Street = this.helper.NormalizeStreet(order.Street);
+                order.Street = _helper.NormalizeStreet(order.Street);
 
                 //Normalize state
-                order.State = this.helper.NormalizeState(order.State);
+                order.State = _helper.NormalizeState(order.State);
             }
             normalizedOrders.AddRange(orders);
             return normalizedOrders;

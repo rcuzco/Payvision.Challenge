@@ -23,6 +23,10 @@ namespace Refactoring.FraudDetection
             {
                 throw new FormatException(FraudConstants.FileIsNotFormatCompliant);
             }
+            if (lines.Any(line=>line.Count(c=>c == ',') != 7))
+            {
+                throw new FormatException(FraudConstants.FileIsNotFormatCompliant);
+            }
 
             foreach (var line in lines)
             {

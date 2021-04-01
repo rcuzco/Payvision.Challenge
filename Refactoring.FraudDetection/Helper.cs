@@ -61,12 +61,16 @@ namespace Refactoring.FraudDetection
 
         public void ValidateFile(string filePath)
         {
-            filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                throw new ArgumentNullException(nameof(filePath));
+            }            
             if (!CheckFileExists(filePath)) throw new FileNotFoundException(FraudConstants.FileDoesNotExist, filePath);
         }
 
         public IEnumerable<string> ReadAllOrderLines(string filePath)
         {
+            ValidateFile(filePath);
             return File.ReadAllLines(filePath);
         }
     }

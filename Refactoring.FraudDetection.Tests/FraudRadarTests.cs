@@ -58,6 +58,34 @@ namespace Refactoring.FraudDetection.Tests
             result.Should().HaveCount(2, "The result should contains the number of lines of the file");
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(FileNotFoundException))]
+        public void CheckFraud_FileDoesNotExist()
+        {
+            var result = ExecuteTest(Path.Combine(Environment.CurrentDirectory, "Files", "NoneExistingFile.txt"));            
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CheckFraud_EmptyFilePath()
+        {
+            var result = ExecuteTest(string.Empty);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void CheckFraud_FileIsNotCompliant()
+        {
+            var result = ExecuteTest(Path.Combine(Environment.CurrentDirectory, "Files", "NotCompliantFile.txt"));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatException))]
+        public void CheckFraud_FileIsNotCompliantComasMissing()
+        {
+            var result = ExecuteTest(Path.Combine(Environment.CurrentDirectory, "Files", "NotCompliantFileComasMissing.txt"));
+        }
+
         private static List<FraudResult> ExecuteTest(string filePath)
         {
             IHelper helper = new Helper();

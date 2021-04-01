@@ -21,6 +21,12 @@
     <None Update="Files\FourLines_MoreThanOneFraudulent.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Files\NotCompliantFile.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Files\NotCompliantFileComasMissing.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Files\OneLineFile.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

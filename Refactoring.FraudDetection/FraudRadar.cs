@@ -38,7 +38,7 @@ namespace Refactoring.FraudDetection
 
                     if (isFraudulent)
                     {
-                        //this way we return each order right afeter being checked ;-)
+                        //this way we return each order right after being checked ;-)
                         yield return new FraudResult { IsFraudulent = true, OrderId = orders[j].OrderId };
                     }
                 }

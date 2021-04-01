@@ -8,7 +8,6 @@ namespace Refactoring.FraudDetection
     public class OrderService : IOrderService
     {
         private readonly IHelper _helper;
-
         public OrderService(IHelper helper)
         {
             _helper = helper;
@@ -30,23 +29,26 @@ namespace Refactoring.FraudDetection
 
             foreach (var line in lines)
             {
-                var items = line.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                Order order = GenerateOrderFromLine(line);
+                yield return order;                
+            }            
+        }
 
-                var order = new Order
-                {
-                    OrderId = int.Parse(items[0]),
-                    DealId = int.Parse(items[1]),
-                    Email = items[2].ToLower(),
-                    Street = items[3].ToLower(),
-                    City = items[4].ToLower(),
-                    State = items[5].ToLower(),
-                    ZipCode = items[6],
-                    CreditCard = items[7]
-                };
-
-                orders.Add(order);
-            }
-            return orders;
+        private Order GenerateOrderFromLine(string line)
+        {
+            var items = line.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var order = new Order
+            {
+                OrderId     = int.Parse(items[0]),
+                DealId      = int.Parse(items[1]),
+                Email       = items[2].ToLower(),
+                Street      = items[3].ToLower(),
+                City        = items[4].ToLower(),
+                State       = items[5].ToLower(),
+                ZipCode     = items[6],
+                CreditCard  = items[7]
+            };
+            return order;
         }
 
         public IEnumerable<Order> NormalizeOrders(IEnumerable<Order> orders)
